@@ -525,8 +525,51 @@
                                     is
                                     Emergency.
                                 </Description>
-                                <Target>
+
                                     <!-- exercise 1.7 -->
+                                    <Target>
+                                        <AnyOf>
+
+                                            <!-- role == Doctor -->
+                                            <AllOf>
+                                                <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                    <AttributeValue
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                        Doctor
+                                                    </AttributeValue>
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                                            AttributeId="role"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Match>
+                                            </AllOf>
+
+                                            <!-- OR role == Nurse -->
+                                            <AllOf>
+                                                <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                    <AttributeValue
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                        Nurse
+                                                    </AttributeValue>
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                                            AttributeId="role"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Match>
+                                            </AllOf>
+
+                                        </AnyOf>
+
+
+
                                 </Target>
                                 <Rule RuleId="DoctorEmergencyRule" Effect="Permit">
                                     <Description>
@@ -534,7 +577,54 @@
                                         context and ensure that the resource being accessed is PatientData.
                                     </Description>
                                     <Condition>
-                                        <!-- TODO: Fill me in. -->
+
+
+                                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                                            <!-- context == Emergency -->
+                                            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                <AttributeValue
+                                                        DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                    Emergency
+                                                </AttributeValue>
+
+                                                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+                                                            AttributeId="context"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Apply>
+
+                                            </Apply>
+
+
+                                            <!-- resource-type == PatientData -->
+                                            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                <AttributeValue
+                                                        DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                    PatientData
+                                                </AttributeValue>
+
+                                                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                                            AttributeId="resource-type"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Apply>
+
+                                            </Apply>
+
+                                        </Apply>
+
+
                                     </Condition>
                                 </Rule>
                             </Policy>
@@ -549,13 +639,57 @@
                                     the case, we can move on to the rule.
                                 </Description>
                                 <Target>
-                                    <!-- TODO: Fill me in. -->
+                                    <!-- exercise 1.9  -->
+
+                                    <!-- os dois Match estão dentro do mesmo AllOf, portanto ambos têm de ser verdadeiros  -->
+                                        <AnyOf>
+                                            <AllOf>
+
+                                                <!-- role == ITAdmin -->
+                                                <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                    <AttributeValue
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                        ITAdmin
+                                                    </AttributeValue>
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                                            AttributeId="role"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Match>
+
+
+                                                <!-- context == Emergency -->
+                                                <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                    <AttributeValue
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                        Emergency
+                                                    </AttributeValue>
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+                                                            AttributeId="context"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Match>
+
+                                            </AllOf>
+                                        </AnyOf>
+
+
+
                                 </Target>
                                 <!-- Hint: we can implement this rule just with the target section. -->
                                 <Rule RuleId="ITAdminEmergencyRule" Effect="Permit">
                                     <Description>Check if emergency.</Description>
                                     <Condition>
-                                        <!-- TODO: Fill me in. -->
+                                        <!-- exercise 1.10
+                                          ainda precisamos de conditon ?-->
                                     </Condition>
                                 </Rule>
                             </Policy>
