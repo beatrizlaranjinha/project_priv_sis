@@ -703,7 +703,28 @@
                                     check if the role of the access subject is "ITAdmin".
                                 </Description>
                                 <Target>
-                                    <!-- TODO: Fill me in. -->
+                                    <!-- exercise 1.11 -->
+                                    <AnyOf>
+                                        <AllOf>
+
+                                            <!-- role == ITAdmin -->
+                                            <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                <AttributeValue
+                                                        DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                    ITAdmin
+                                                </AttributeValue>
+
+                                                <AttributeDesignator
+                                                        Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                                        AttributeId="role"
+                                                        DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                        MustBePresent="false"/>
+
+                                            </Match>
+
+                                        </AllOf>
+                                    </AnyOf>
                                 </Target>
                                 <Rule RuleId="ITAdminHiringRule" Effect="Permit">
                                     <Description>
@@ -714,10 +735,57 @@
                                         to recover old ground.
                                     </Description>
                                     <Condition>
-                                        <!-- TODO: Fill me in. -->
+                                        <!-- exercise 1.12 -->
+                                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                                            <!-- resource-type == EmployeeData -->
+                                            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                <AttributeValue
+                                                        DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                    EmployeeData
+                                                </AttributeValue>
+
+                                                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                                            AttributeId="resource-type"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Apply>
+
+                                            </Apply>
+
+
+                                            <!-- context == Hiring -->
+                                            <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                <AttributeValue
+                                                        DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                    Hiring
+                                                </AttributeValue>
+
+                                                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
+                                                            AttributeId="context"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Apply>
+
+                                            </Apply>
+
+                                        </Apply>
+
                                     </Condition>
                                 </Rule>
                             </Policy>
+
+
 
                             <!-- Default - Deny -->
                             <Policy PolicyId="DefaultDeny" Version="1.0"
