@@ -410,7 +410,50 @@
                                     needed here, since the AnyOf and AllOf tags already handle this logic.
                                 </Description>
                                 <Target>
-                                    <!-- TODO: Fill me in. -->
+                                    <!-- exercise 1.5 -->
+
+                                        <AnyOf>
+
+                                            <!-- role == Doctor -->
+                                            <AllOf>
+                                                <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                    <AttributeValue
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                        Doctor
+                                                    </AttributeValue>
+
+                                                    <!-- Vai buscar o role de quem está a fazer o pedido -->
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                                            AttributeId="role"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Match>
+                                            </AllOf>
+
+
+                                            <!-- OR role == Nurse -->
+                                            <AllOf>
+                                                <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                    <AttributeValue
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                        Nurse
+                                                    </AttributeValue>
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                                            AttributeId="role"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Match>
+                                            </AllOf>
+
+                                        </AnyOf>
+
                                 </Target>
                                 <Rule RuleId="DoctorOwnPatientRule" Effect="Permit">
                                     <Description>
@@ -421,7 +464,53 @@
                                         is patient data.
                                     </Description>
                                     <Condition>
-                                        <!-- TODO: Fill me in. -->
+                                        <!-- exercise 1.6  -->
+                                        <!--pretende verificar que o médico/enfermeiro
+                                        que está a pedir acesso é o profissional associado
+                                         aquele paciente e que os dados acedidos são mesmo PatientData -->
+
+                                        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+
+                                                <!-- subject.id == patient's doctor-id -->
+                                                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-set-equals">
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
+                                                            AttributeId="id"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                    <AttributeDesignator
+                                                            Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                                            AttributeId="doctor-id"
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                            MustBePresent="false"/>
+
+                                                </Apply>
+
+
+                                                <!-- resource-type == PatientData -->
+                                                <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+
+                                                    <AttributeValue
+                                                            DataType="http://www.w3.org/2001/XMLSchema#string">
+                                                        PatientData
+                                                    </AttributeValue>
+
+                                                    <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
+
+                                                        <AttributeDesignator
+                                                                Category="urn:oasis:names:tc:xacml:3.0:attribute-category:resource"
+                                                                AttributeId="resource-type"
+                                                                DataType="http://www.w3.org/2001/XMLSchema#string"
+                                                                MustBePresent="false"/>
+
+                                                    </Apply>
+
+                                                </Apply>
+
+                                            </Apply>
+
                                     </Condition>
                                 </Rule>
                             </Policy>
@@ -437,7 +526,7 @@
                                     Emergency.
                                 </Description>
                                 <Target>
-                                    <!-- TODO: Fill me in. -->
+                                    <!-- exercise 1.7 -->
                                 </Target>
                                 <Rule RuleId="DoctorEmergencyRule" Effect="Permit">
                                     <Description>
