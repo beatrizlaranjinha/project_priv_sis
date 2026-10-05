@@ -64,7 +64,106 @@ public class XACMLPDP {
         Map<String, String> actionAttrs = new HashMap<>();
         Map<String, String> envAttrs = new HashMap<>();
 
-        // TODO: Place the attributes from the XML into the appropriate HashMap.
+        // TODO
+        // Identificar quem está a pedir o acesso
+        if (requester instanceof Patient) {
+            Patient patient = (Patient) requester;
+
+            subjectAttrs.put("id", patient.getStringId());
+            subjectAttrs.put("role", "Patient");
+        }
+
+        else if (requester instanceof Employee) {
+            Employee employee = (Employee) requester;
+
+            subjectAttrs.put("id", employee.getStringId());
+            subjectAttrs.put("role", employee.getRole());
+        }
+
+        // Se o recurso a que queremos aceder são dados de um Employee
+        if (resource instanceof Employee) {
+
+            Employee employee = (Employee) resource;
+
+            // ID do employee cujos dados estão a ser acedidos
+            resourceAttrs.put("id", employee.getStringId());
+
+            // Tipo de recurso usado no ci_policy.xml
+            resourceAttrs.put("resource-type", "EmployeeData");
+        }
+
+        else if (resource instanceof Patient) {
+
+            Patient patient = (Patient) resource;
+
+            // ID do paciente
+            resourceAttrs.put("id", patient.getStringId());
+
+            //  aceder a dados de paciente
+            resourceAttrs.put("resource-type", "PatientData");
+
+            //  ID do médico responsável pelo paciente
+            if (patient.getPrimaryDoctor() != null) {
+                resourceAttrs.put(
+                        "doctor-id", //medico associoado ao paciente
+                        patient.getPrimaryDoctor().getStringId()
+                );
+            }
+        }
+        else if (resource instanceof Appointment) {
+
+            Appointment appointment = (Appointment) resource;
+
+            // Tipo de recurso
+            resourceAttrs.put("resource-type", "AppointmentData");
+
+            // A appointment pertence a um Patient
+            if (appointment.getPatient() != null) {
+
+                // O "id" do recurso será o ID do paciente
+                resourceAttrs.put(
+                        "id",
+                        appointment.getPatient().getStringId()
+                );
+
+                // Médico responsável por esse paciente
+                if (appointment.getPatient().getPrimaryDoctor() != null) {
+                    resourceAttrs.put(
+                            "doctor-id",
+                            appointment.getPatient()
+                                    .getPrimaryDoctor()
+                                    .getStringId()
+                    );
+                }
+            }
+
+            // Employee associado à appointment
+            if (appointment.getEmployee() != null) {
+                resourceAttrs.put(
+                        "employee-id",
+                        appointment.getEmployee().getStringId()
+                );
+            }
+        }
+
+        else if (resource instanceof Payment) {
+
+            Payment payment = (Payment) resource;
+
+            // Tipo de recurso
+            resourceAttrs.put("resource-type", "PaymentData");
+
+            // O pagamento pertence a um Patient
+            if (payment.getPatient() != null) {
+                resourceAttrs.put(
+                        "id",
+                        payment.getPatient().getStringId()
+                );
+            }
+        }
+
+        // Guarda o contexto do acesso para a policy XACML
+        envAttrs.put("context", context);
         
         actionAttrs.put("action-id", "read");
 
