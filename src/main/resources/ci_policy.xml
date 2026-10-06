@@ -16,9 +16,7 @@
             <AnyOf>
                 <AllOf>
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Patient
-                        </AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Patient</AttributeValue>
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
                                 AttributeId="role"
@@ -72,9 +70,7 @@
 
                         <!-- Valor com que queremos comparar -->
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Clerk
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Clerk</AttributeValue>
 
                         <!-- Vai buscar o atributo "role" do utilizador -->
                         <AttributeDesignator
@@ -91,9 +87,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Accountant
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Accountant</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
@@ -109,9 +103,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Doctor
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Doctor</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
@@ -127,9 +119,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Nurse
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Nurse</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
@@ -145,9 +135,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            ITAdmin
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">ITAdmin</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
@@ -205,9 +193,7 @@
             <AnyOf>
                 <AllOf>
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Clerk
-                        </AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Clerk</AttributeValue>
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
                                 AttributeId="role"
@@ -232,9 +218,7 @@
 
                     <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
-                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">
-                            AppointmentData
-                        </AttributeValue>
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">AppointmentData</AttributeValue>
 
                         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
                             <AttributeDesignator
@@ -256,13 +240,9 @@
 
                         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
 
-                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">
-                                Scheduling
-                            </AttributeValue>
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Scheduling</AttributeValue>
 
-                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">
-                                Check-in
-                            </AttributeValue>
+                            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Check-in</AttributeValue>
 
                         </Apply>
 
@@ -292,9 +272,7 @@
 
                         <!-- Valor que queremos comparar -->
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Accountant
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Accountant</AttributeValue>
 
                         <!-- Vai buscar o atributo role de quem está a fazer o pedido -->
                         <AttributeDesignator
@@ -339,14 +317,10 @@
                         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
 
                             <AttributeValue
-                                    DataType="http://www.w3.org/2001/XMLSchema#string">
-                                PaymentData
-                            </AttributeValue>
+                                    DataType="http://www.w3.org/2001/XMLSchema#string">PaymentData</AttributeValue>
 
                             <AttributeValue
-                                    DataType="http://www.w3.org/2001/XMLSchema#string">
-                                EmployeeData
-                            </AttributeValue>
+                                    DataType="http://www.w3.org/2001/XMLSchema#string">EmployeeData</AttributeValue>
 
                         </Apply>
 
@@ -356,9 +330,7 @@
                     <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            BillingAndPayment
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">BillingAndPayment</AttributeValue>
 
                         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
 
@@ -396,9 +368,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Doctor
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Doctor</AttributeValue>
 
                         <!-- Vai buscar o role de quem está a fazer o pedido -->
                         <AttributeDesignator
@@ -415,9 +385,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Nurse
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Nurse</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
@@ -468,9 +436,7 @@
                     <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            PatientData
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">PatientData</AttributeValue>
 
                         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
 
@@ -508,9 +474,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Doctor
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Doctor</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
@@ -526,9 +490,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Nurse
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Nurse</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
@@ -557,9 +519,7 @@
                     <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Emergency
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Emergency</AttributeValue>
 
                         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
 
@@ -577,9 +537,7 @@
                     <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            PatientData
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">PatientData</AttributeValue>
 
                         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
 
@@ -618,9 +576,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            ITAdmin
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">ITAdmin</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
@@ -634,9 +590,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Emergency
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Emergency</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:3.0:attribute-category:environment"
@@ -676,9 +630,7 @@
                     <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            ITAdmin
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">ITAdmin</AttributeValue>
 
                         <AttributeDesignator
                                 Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject"
@@ -709,9 +661,7 @@
                     <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            EmployeeData
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">EmployeeData</AttributeValue>
 
                         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
 
@@ -729,9 +679,7 @@
                     <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 
                         <AttributeValue
-                                DataType="http://www.w3.org/2001/XMLSchema#string">
-                            Hiring
-                        </AttributeValue>
+                                DataType="http://www.w3.org/2001/XMLSchema#string">Hiring</AttributeValue>
 
                         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
 

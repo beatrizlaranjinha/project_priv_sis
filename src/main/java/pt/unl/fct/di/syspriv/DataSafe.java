@@ -134,7 +134,7 @@ public class DataSafe {
 
         String choice = scanner.nextLine();
         return switch (choice) {
-            case "1" -> "Billing and Payments";
+            case "1" -> "BillingAndPayment"; //como esta no ci_policy
             case "2" -> "Scheduling";
             case "3" -> "Check-in";
             case "4" -> "Hiring";

@@ -167,6 +167,12 @@ public class XACMLPDP {
         
         actionAttrs.put("action-id", "read");
 
+        //temp
+        System.out.println("SUBJECT = " + subjectAttrs);
+        System.out.println("RESOURCE = " + resourceAttrs);
+        System.out.println("ENVIRONMENT = " + envAttrs);
+        System.out.println("ACTION = " + actionAttrs);
+
         DecisionRequestBuilder<?> requestBuilder = pdp.newRequestBuilder(-1, -1);
 
         addAttributes(requestBuilder, SUBJECT_CATEGORY, subjectAttrs);
@@ -177,6 +183,10 @@ public class XACMLPDP {
         var request = requestBuilder.build(true);
         logger.debug(request.toString());
         DecisionResult result = pdp.evaluate(request);
+
+        //temp
+        System.out.println("DECISION = " + result.getDecision());
+        System.out.println("FULL RESULT = " + result);
         
         logger.debug(result.toString());
         return result.getDecision() == DecisionType.PERMIT;
