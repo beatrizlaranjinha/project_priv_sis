@@ -1,7 +1,11 @@
 package pt.unl.fct.di.syspriv.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +34,28 @@ public class Employee {
     @OneToMany(mappedBy = "primaryDoctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Patient> patients;
 
+    //Lab2
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "retention_until")
+    private LocalDateTime retentionUntil;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_subject_id")
+    private List<ConsentRecord> consentRecords;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "patient_subject_id")
+    private List<GDPRRequest> gdprRequests;
+
+
+
     public Employee() {}
 
     public Employee(String name, String role, String department, Boolean isAdmin) {
@@ -55,6 +81,20 @@ public class Employee {
     public void setAppointments(List<Appointment> appointments) { this.appointments = appointments; }
     public List<Patient> getPatients() { return patients; }
     public void setPatients(List<Patient> patients) { this.patients = patients; }
+
+    //Lab2 functions
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public LocalDateTime getRetentionUntil() { return retentionUntil; }
+    public void setRetentionUntil(LocalDateTime retentionUntil) { this.retentionUntil = retentionUntil; }
+
+    public List<ConsentRecord> getConsentRecords() { return consentRecords; }
+    public void setConsentRecords(List<ConsentRecord> consentRecords) { this.consentRecords = consentRecords; }
+    public List<GDPRRequest> getGdprRequests() { return gdprRequests; }
+    public void setGdprRequests(List<GDPRRequest> gdprRequests) { this.gdprRequests = gdprRequests; }
+
 
     // For debugging and logging purposes.
     @Override
