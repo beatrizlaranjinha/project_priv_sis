@@ -65,8 +65,9 @@ public class DataSafe {
                 System.out.println("Invalid ID. Please try again.");
                 continue;
             }
-
-            handleDataAccess(context, tableChoice, id);
+            //adicionado um scanner para perguntar o lawful basis a cada request, um que não exista é rejeitado pela policie
+            String lawfulBasis = promptLawfulBasis(scanner);
+            handleDataAccess(context, tableChoice, id, lawfulBasis);
         }
 
         scanner.close();
@@ -171,7 +172,15 @@ public class DataSafe {
         }
     }
 
-    private void handleDataAccess(String context, int tableChoice, Long id) {
+    //Para inserir qual das 6 lawful basis queres.
+    private String promptLawfulBasis(Scanner scanner) {
+        System.out.println("Enter the lawful basis for this read:");
+        System.out.println("consent, contract, legal-obligation, vital-interests, public-task, legitimate-interests");
+        System.out.print("Lawful basis: ");
+        return scanner.nextLine().trim();
+    }
+
+    private void handleDataAccess(String context, int tableChoice, Long id, String lawfulBasis) {
         Class<?> entityClass;
         String entityName;
 
@@ -208,7 +217,7 @@ public class DataSafe {
             }
 
             // Check access via XACML PDP
-            boolean allowed = pdp.checkAccess(loggedInPerson, result, context);
+            boolean allowed = pdp.checkAccess(loggedInPerson, result, context, lawfulBasis);
 
             if (allowed) {
                 System.out.println("Access Granted!");

@@ -9,5 +9,7 @@
         <mapping class="pt.unl.fct.di.syspriv.entities.Patient"/>
         <mapping class="pt.unl.fct.di.syspriv.entities.Appointment"/>
         <mapping class="pt.unl.fct.di.syspriv.entities.Payment"/>
+        <mapping class="pt.unl.fct.di.syspriv.entities.ConsentRecord"/>
+        <mapping class="pt.unl.fct.di.syspriv.entities.GDPRRequest"/>
     </session-factory>
 </hibernate-configuration>
