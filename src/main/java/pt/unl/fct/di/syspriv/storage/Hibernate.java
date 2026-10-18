@@ -4,6 +4,7 @@ package pt.unl.fct.di.syspriv.storage;
 
 import java.io.File;
 import java.util.List;
+import java.util.function.Function;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -53,6 +54,24 @@ public class Hibernate {
 		} catch (Exception e) {
 		     if (tx!=null) tx.rollback();
 		     throw e;
+		}
+	}
+
+	/**
+	 * Runs work in one database transaction and rolls back if the work or commit fails.
+	 */
+	public <T> T inTransaction(Function<org.hibernate.Session, T> work) {
+		Transaction tx = null;
+		try (var session = sessionFactory.openSession()) {
+			tx = session.beginTransaction();
+			T result = work.apply(session);
+			tx.commit();
+			return result;
+		} catch (RuntimeException | Error e) {
+			if (tx != null && tx.isActive()) {
+				tx.rollback();
+			}
+			throw e;
 		}
 	}
 

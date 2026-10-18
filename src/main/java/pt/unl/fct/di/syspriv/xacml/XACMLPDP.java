@@ -55,47 +55,75 @@ public class XACMLPDP {
         Map<String, String> envAttrs = new HashMap<>();
 
         if (requester instanceof Patient patient) {
-            subjectAttrs.put("id", patient.getStringId());
+            subjectAttrs.put("id", String.valueOf(patient.getId()));
             subjectAttrs.put("role", "Patient");
         } else if (requester instanceof Employee employee) {
-            subjectAttrs.put("id", employee.getStringId());
+            subjectAttrs.put("id", String.valueOf(employee.getId()));
             subjectAttrs.put("role", employee.getRole());
         }
 
         Object dataSubject = resource;
         if (resource instanceof Employee employee) {
-            resourceAttrs.put("id", employee.getStringId());
+            resourceAttrs.put("id", String.valueOf(employee.getId()));
             resourceAttrs.put("resource-type", "EmployeeData");
         } else if (resource instanceof Patient patient) {
-            resourceAttrs.put("id", patient.getStringId());
+            resourceAttrs.put("id", String.valueOf(patient.getId()));
             resourceAttrs.put("resource-type", "PatientData");
             if (patient.getPrimaryDoctor() != null) {
-                resourceAttrs.put("doctor-id", patient.getPrimaryDoctor().getStringId());
+                resourceAttrs.put("doctor-id", String.valueOf(patient.getPrimaryDoctor().getId()));
             }
         } else if (resource instanceof Appointment appointment) {
             resourceAttrs.put("resource-type", "AppointmentData");
             if (appointment.getPatient() != null) {
-                dataSubject = appointment.getPatient();
-                resourceAttrs.put("id", appointment.getPatient().getStringId());
-                if (appointment.getPatient().getPrimaryDoctor() != null) {
-                    resourceAttrs.put("doctor-id", appointment.getPatient().getPrimaryDoctor().getStringId());
+                Patient patient = Hibernate.getInstance().get(Patient.class, appointment.getPatient().getId());
+                dataSubject = patient;
+                resourceAttrs.put("id", String.valueOf(appointment.getPatient().getId()));
+                if (patient != null && patient.getPrimaryDoctor() != null) {
+                    resourceAttrs.put("doctor-id", String.valueOf(patient.getPrimaryDoctor().getId()));
                 }
             }
             if (appointment.getEmployee() != null) {
-                resourceAttrs.put("employee-id", appointment.getEmployee().getStringId());
+                resourceAttrs.put("employee-id", String.valueOf(appointment.getEmployee().getId()));
             }
         } else if (resource instanceof Payment payment) {
             resourceAttrs.put("resource-type", "PaymentData");
             if (payment.getPatient() != null) {
-                dataSubject = payment.getPatient();
-                resourceAttrs.put("id", payment.getPatient().getStringId());
+                dataSubject = Hibernate.getInstance().get(Patient.class, payment.getPatient().getId());
+                resourceAttrs.put("id", String.valueOf(payment.getPatient().getId()));
             }
+        } else if (resource instanceof ConsentRecord consent) {
+            resourceAttrs.put("resource-type", "ConsentRecordData");
+            dataSubject = consentSubject(consent.getPatientSubjectId(), consent.getEmployeeSubjectId());
+            putSubjectResourceId(resourceAttrs, dataSubject);
+        } else if (resource instanceof GDPRRequest request) {
+            resourceAttrs.put("resource-type", "GDPRRequestData");
+            dataSubject = consentSubject(request.getPatientSubjectId(), request.getEmployeeSubjectId());
+            putSubjectResourceId(resourceAttrs, dataSubject);
         }
 
         addGdprAttributes(resourceAttrs, dataSubject, lawfulBasis);
         actionAttrs.put("action-id", "read");
         envAttrs.put("context", context == null ? "" : context);
         return evaluateAccessRequest(subjectAttrs, resourceAttrs, actionAttrs, envAttrs);
+    }
+
+    // Retorna o subject do consent, que pode ser um Patient ou um Employee, dependendo de qual ID é fornecido. Se ambos forem nulos, retorna null.
+    private Object consentSubject(Long patientId, Long employeeId) {
+        if (patientId != null) {
+            return Hibernate.getInstance().get(Patient.class, patientId);
+        }
+        if (employeeId != null) {
+            return Hibernate.getInstance().get(Employee.class, employeeId);
+        }
+        return null;
+    }
+    // Adiciona o ID do subject ao resourceAttrs.
+    private void putSubjectResourceId(Map<String, String> resourceAttrs, Object subject) {
+        if (subject instanceof Patient patient) {
+            resourceAttrs.put("id", String.valueOf(patient.getId()));
+        } else if (subject instanceof Employee employee) {
+            resourceAttrs.put("id", String.valueOf(employee.getId()));
+        }
     }
 
     public boolean evaluateAccessRequest(

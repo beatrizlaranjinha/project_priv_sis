@@ -29,6 +29,10 @@ public class Payment {
     @Column(length = 20)
     private String cardNumber;
 
+    //Nova coluna divido ao right to Erasure
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean anonymized;
+
     public Payment() {}
 
     public Payment(LocalDate dateTime, Patient patient, float value, Appointment appointment,
@@ -54,6 +58,8 @@ public class Payment {
     public void setAppointment(Appointment appointment) { this.appointment = appointment; }
     public String getCardNumber() { return cardNumber; }
     public void setCardNumber(String cardNumber) { this.cardNumber = cardNumber; }
+    public boolean isAnonymized() { return anonymized; }
+    public void setAnonymized(boolean anonymized) { this.anonymized = anonymized; }
 
     // For debugging and logging purposes.
     @Override
