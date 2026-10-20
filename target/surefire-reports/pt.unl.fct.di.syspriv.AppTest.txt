@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: pt.unl.fct.di.syspriv.AppTest
--------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.525 s -- in pt.unl.fct.di.syspriv.AppTest

@@ -48,7 +48,11 @@ public class Patient {
     @Column(name = "retention_until")
     private LocalDateTime retentionUntil;
 
-    @Column(name = "erasure_requested", nullable = false)
+    @Column(
+            name = "erasure_requested",
+            nullable = false,
+            columnDefinition = "boolean default false"
+    )
     private boolean erasureRequested = false;
 
     @Column(name = "erasure_completed_at")
