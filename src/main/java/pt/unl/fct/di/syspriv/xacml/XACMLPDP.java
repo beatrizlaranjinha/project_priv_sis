@@ -43,12 +43,23 @@ public class XACMLPDP {
                 XACMLPDP.class.getClassLoader().getResource("pdp.xml").getPath());
         this.pdp = new BasePdpEngine(config);
     }
-    //foi necessário mudar o método checkAccess para receber o lawfulBasis, pois é necessário para a avaliação da política de acesso.
+
     public boolean checkAccess(Object requester, Object resource, String context) throws Exception {
         return checkAccess(requester, resource, context, null);
     }
+    public boolean checkAccessGDPR(
+            Object requester,
+            Object resource,
+            String context,
+            String lawfulBasis) throws Exception {
+
+        return checkAccess(requester, resource, context, lawfulBasis);
+    }
 
     public boolean checkAccess(Object requester, Object resource, String context, String lawfulBasis) throws Exception {
+        if (requester == null || resource == null) {
+            return false;
+        }
         Map<String, String> subjectAttrs = new HashMap<>();
         Map<String, String> resourceAttrs = new HashMap<>();
         Map<String, String> actionAttrs = new HashMap<>();
@@ -57,9 +68,13 @@ public class XACMLPDP {
         if (requester instanceof Patient patient) {
             subjectAttrs.put("id", String.valueOf(patient.getId()));
             subjectAttrs.put("role", "Patient");
+            subjectAttrs.put("subject-type", "PATIENT");
         } else if (requester instanceof Employee employee) {
             subjectAttrs.put("id", String.valueOf(employee.getId()));
             subjectAttrs.put("role", employee.getRole());
+            subjectAttrs.put("subject-type", "EMPLOYEE");
+        } else {
+            return false;
         }
 
         Object dataSubject = resource;
@@ -99,6 +114,12 @@ public class XACMLPDP {
             resourceAttrs.put("resource-type", "GDPRRequestData");
             dataSubject = consentSubject(request.getPatientSubjectId(), request.getEmployeeSubjectId());
             putSubjectResourceId(resourceAttrs, dataSubject);
+        }
+
+        if (dataSubject instanceof Patient) {
+            resourceAttrs.put("subject-type", "PATIENT");
+        } else if (dataSubject instanceof Employee) {
+            resourceAttrs.put("subject-type", "EMPLOYEE");
         }
 
         addGdprAttributes(resourceAttrs, dataSubject, lawfulBasis);
@@ -161,8 +182,12 @@ public class XACMLPDP {
         resourceAttrs.put("consent-research", Boolean.toString(isActive(researchConsent)));
 
         List<GDPRRequest> requests = requestsFor(dataSubject);
-        resourceAttrs.put("erasure-requested", Boolean.toString(requests.stream()
-                .anyMatch(request -> "ERASURE".equalsIgnoreCase(request.getRequestType()))));
+        boolean erasureRequested = dataSubject instanceof Patient patient && patient.isErasureRequested();
+        erasureRequested = erasureRequested || requests.stream().anyMatch(request ->
+                "ERASURE".equalsIgnoreCase(request.getRequestType())
+                        && !"FAILED".equalsIgnoreCase(request.getStatus())
+                        && !"DENIED".equalsIgnoreCase(request.getStatus()));
+        resourceAttrs.put("erasure-requested", Boolean.toString(erasureRequested));
 
         LocalDateTime retentionUntil = retentionUntil(dataSubject);
         resourceAttrs.put("retention-expired", Boolean.toString(
@@ -194,18 +219,12 @@ public class XACMLPDP {
         return List.of();
     }
 
-    // Seleciona o consent mais novo. Isto porque o ID é incremental, então o mais novo terá o maior ID. O timestamp de é usado para determinar a data do consentimento, e se houver empate, o ID é usado como critério de desempate.
     private ConsentRecord latestConsent(List<ConsentRecord> records, String purpose) {
         return records.stream()
                 .filter(record -> purpose.equalsIgnoreCase(record.getPurpose()))
-                .max(Comparator.comparing(
-                                ConsentRecord::getGrantedAt,
-                                Comparator.nullsFirst(Comparator.naturalOrder()))
-                        .thenComparing(ConsentRecord::getId,
-                                Comparator.nullsFirst(Comparator.naturalOrder())))
+                .max(Comparator.comparing(ConsentRecord::getId))
                 .orElse(null);
     }
-
 
     private boolean isActive(ConsentRecord record) {
         return record != null && Boolean.TRUE.equals(record.getGranted()) && record.getWithdrawnAt() == null;

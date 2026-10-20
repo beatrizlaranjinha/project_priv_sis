@@ -44,7 +44,7 @@ public class DataSafe {
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
-        
+
         if (!login(scanner)) {
             logger.error("Login failed. Exiting...");
             return;
@@ -218,7 +218,20 @@ public class DataSafe {
     //funcao para exportar a data, onde o user escolhe o Lawfulbasis;
     private void exportMyData(Scanner scanner) {
         String lawfulBasis = promptLawfulBasis(scanner);
+        GDPRRequest accessRequest = new GDPRRequest();
+        accessRequest.setSubjectType(loggedInPerson instanceof Patient ? "PATIENT" : "EMPLOYEE");
+        if (loggedInPerson instanceof Patient patient) {
+            accessRequest.setPatientSubjectId(patient.getId());
+        } else if (loggedInPerson instanceof Employee employee) {
+            accessRequest.setEmployeeSubjectId(employee.getId());
+        }
+        accessRequest.setRequestType("ACCESS");
+        accessRequest.setRequestedAt(LocalDateTime.now());
+        accessRequest.setStatus("PENDING");
+
         try {
+            hibernate.persist(accessRequest);
+
             Map<String, Object> export = new LinkedHashMap<>();
             export.put("subject", subjectSummary(loggedInPerson));
             //duas opcoes: Patient or Employee, e através do hibernate, faz-se o fetch dos dados relacionados com o subject, e depois exporta-se para JSON.
@@ -259,9 +272,22 @@ public class DataSafe {
                 throw new IllegalStateException("Cannot export data for an unsupported subject type.");
             }
 
-            System.out.println(JSON.writerWithDefaultPrettyPrinter().writeValueAsString(export));
+            String json = JSON.writerWithDefaultPrettyPrinter().writeValueAsString(export);
+            System.out.println(json);
+            accessRequest.setCompletedAt(LocalDateTime.now());
+            accessRequest.setStatus("COMPLETED");
+            hibernate.update(accessRequest);
         } catch (Exception e) {
             logger.error("Failed to export subject data.", e);
+            if (accessRequest.getId() != null) {
+                try {
+                    accessRequest.setStatus("FAILED");
+                    accessRequest.setCompletedAt(LocalDateTime.now());
+                    hibernate.update(accessRequest);
+                } catch (Exception logError) {
+                    logger.error("Failed to update the GDPR access request.", logError);
+                }
+            }
             System.out.println("Data export failed. See the application log for details.");
         }
     }
@@ -272,7 +298,7 @@ public class DataSafe {
         List<Map<String, Object>> exported = new ArrayList<>();
         for (Object record : records) {
             Long id = recordId(record);
-            if (pdp.checkAccess(loggedInPerson, record, context, lawfulBasis)) {
+            if (pdp.checkAccessGDPR(loggedInPerson, record, context, lawfulBasis)) {
                 exported.add(recordData(record));
             } else {
                 Map<String, Object> redacted = new LinkedHashMap<>();
@@ -305,6 +331,8 @@ public class DataSafe {
             data.put("createdAt", stringValue(patient.getCreatedAt()));
             data.put("updatedAt", stringValue(patient.getUpdatedAt()));
             data.put("retentionUntil", stringValue(patient.getRetentionUntil()));
+            data.put("erasureRequested", patient.isErasureRequested());
+            data.put("erasureCompletedAt", stringValue(patient.getErasureCompletedAt()));
         } else if (record instanceof Employee employee) {
             data.put("name", employee.getName());
             data.put("role", employee.getRole());
@@ -376,7 +404,7 @@ public class DataSafe {
         try {
             ErasureResult result = hibernate.inTransaction(session -> {
                 Object managedSubject;
-                String token = "ANON " + UUID.randomUUID(); //gera um token aleatório para substituir os dados do subject.
+                String token = "ANON_" + UUID.randomUUID(); //gera um token aleatório para substituir os dados do subject.
                 GDPRRequest request = new GDPRRequest();
                 request.setSubjectType(loggedInPerson instanceof Patient ? "PATIENT" : "EMPLOYEE");
                 request.setRequestType("ERASURE");
@@ -390,6 +418,7 @@ public class DataSafe {
                     }
                     Patient managedPatient = (Patient) managedSubject;
                     request.setPatientSubjectId(managedPatient.getId());
+                    managedPatient.setErasureRequested(true);
                     managedPatient.setName(token); //aqui são colocados então os tokens aleatórios no lugar do nome e endereço do paciente, para anonimizar os dados.
                     managedPatient.setAddress(token);
 
@@ -398,9 +427,10 @@ public class DataSafe {
                             .setParameter("patientId", managedPatient.getId())
                             .getResultList();
                     for (Payment payment : payments) {
-                        payment.setCardNumber("ANON " + UUID.randomUUID());
+                        payment.setCardNumber("ANON_" + UUID.randomUUID());
                         payment.setAnonymized(true);
                     }
+                    managedPatient.setErasureCompletedAt(LocalDateTime.now());
                 } else if (loggedInPerson instanceof Employee employee) {
                     managedSubject = session.find(Employee.class, employee.getId());
                     if (managedSubject == null) {
@@ -422,9 +452,12 @@ public class DataSafe {
             if (loggedInPerson instanceof Patient patient) {
                 patient.setName(result.token());
                 patient.setAddress(result.token());
+                patient.setErasureRequested(true);
+                patient.setErasureCompletedAt(result.request().getCompletedAt());
             } else if (loggedInPerson instanceof Employee employee) {
                 employee.setName(result.token());
             }
+
             System.out.println("Erasure request completed. Request ID: " + result.request().getId());
             System.out.println("Your anonymized login name is: " + result.token());
         } catch (Exception e) {
@@ -472,13 +505,13 @@ public class DataSafe {
             }
 
             // Check access via XACML PDP
-            boolean allowed = pdp.checkAccess(loggedInPerson, result, context, lawfulBasis);
+            boolean allowed = pdp.checkAccessGDPR(loggedInPerson, result, context, lawfulBasis);
 
             if (allowed) {
                 System.out.println("Access Granted!");
             } else {
-                System.out.println("Access Denied: You do not have permission to view " 
-                                + entityName + " data.");
+                System.out.println("Access Denied: You do not have permission to view "
+                        + entityName + " data.");
             }
 
         } catch (Exception e) {
@@ -487,3 +520,4 @@ public class DataSafe {
         }
     }
 }
+
