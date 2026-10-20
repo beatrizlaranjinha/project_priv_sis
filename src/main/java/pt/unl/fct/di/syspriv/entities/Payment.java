@@ -26,7 +26,7 @@ public class Payment {
     @OneToOne
     private Appointment appointment;
 
-    @Column(length = 20)
+    @Column(length = 50)
     private String cardNumber;
 
     //Nova coluna divido ao right to Erasure

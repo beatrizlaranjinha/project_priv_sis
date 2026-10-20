@@ -48,6 +48,12 @@ public class Patient {
     @Column(name = "retention_until")
     private LocalDateTime retentionUntil;
 
+    @Column(name = "erasure_requested", nullable = false)
+    private boolean erasureRequested = false;
+
+    @Column(name = "erasure_completed_at")
+    private LocalDateTime erasureCompletedAt;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_subject_id")
     private List<ConsentRecord> consentRecords;
@@ -64,8 +70,7 @@ public class Patient {
         this.birthdate = birthdate;
         this.insurance = insurance;
         this.address = address;
-        this.primaryDoctor = primaryDoctor;
-    }
+        this.primaryDoctor = primaryDoctorId;    }
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -91,7 +96,10 @@ public class Patient {
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     public LocalDateTime getRetentionUntil() { return retentionUntil; }
     public void setRetentionUntil(LocalDateTime retentionUntil) { this.retentionUntil = retentionUntil; }
-
+    public boolean isErasureRequested() { return erasureRequested; }
+    public void setErasureRequested(boolean erasureRequested) { this.erasureRequested = erasureRequested; }
+    public LocalDateTime getErasureCompletedAt() { return erasureCompletedAt;}
+    public void setErasureCompletedAt(LocalDateTime erasureCompletedAt) { this.erasureCompletedAt = erasureCompletedAt; }
     public List<ConsentRecord> getConsentRecords() { return consentRecords; }
     public void setConsentRecords(List<ConsentRecord> consentRecords) { this.consentRecords = consentRecords; }
     public List<GDPRRequest> getGdprRequests() { return gdprRequests; }

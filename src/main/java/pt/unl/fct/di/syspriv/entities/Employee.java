@@ -47,11 +47,11 @@ public class Employee {
     private LocalDateTime retentionUntil;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_subject_id")
+    @JoinColumn(name = "employee_subject_id")
     private List<ConsentRecord> consentRecords;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "patient_subject_id")
+    @JoinColumn(name = "employee_subject_id")
     private List<GDPRRequest> gdprRequests;
 
 
