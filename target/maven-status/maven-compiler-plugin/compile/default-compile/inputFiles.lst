@@ -1,10 +1,14 @@
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/DataSafe.java
+/Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/anonymity/Anonymizable.java
+/Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/entities/AnonymousHealthData.java
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/entities/Appointment.java
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/entities/ConsentRecord.java
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/entities/Employee.java
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/entities/GDPRRequest.java
+/Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/entities/HealthData.java
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/entities/Patient.java
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/entities/Payment.java
+/Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/kanonymity/KAnonymityTool.java
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/storage/Hibernate.java
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/util/ConfigLoader.java
 /Users/beatrizlaranjinha/Desktop/ProjectPrivSis/proj1/src/main/java/pt/unl/fct/di/syspriv/xacml/XACMLPDP.java

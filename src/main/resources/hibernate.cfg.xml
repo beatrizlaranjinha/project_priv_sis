@@ -11,5 +11,6 @@
         <mapping class="pt.unl.fct.di.syspriv.entities.Payment"/>
         <mapping class="pt.unl.fct.di.syspriv.entities.ConsentRecord"/>
         <mapping class="pt.unl.fct.di.syspriv.entities.GDPRRequest"/>
+        <mapping class="pt.unl.fct.di.syspriv.entities.HealthData"/>
     </session-factory>
 </hibernate-configuration>

@@ -20,6 +20,7 @@ import pt.unl.fct.di.syspriv.entities.GDPRRequest;
 import pt.unl.fct.di.syspriv.entities.Patient;
 import pt.unl.fct.di.syspriv.entities.Payment;
 import pt.unl.fct.di.syspriv.storage.Hibernate;
+import pt.unl.fct.di.syspriv.entities.HealthData;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -106,6 +107,14 @@ public class XACMLPDP {
                 dataSubject = Hibernate.getInstance().get(Patient.class, payment.getPatient().getId());
                 resourceAttrs.put("id", String.valueOf(payment.getPatient().getId()));
             }
+        } else if (resource instanceof HealthData healthData) {
+            resourceAttrs.put("resource-type", "HealthData");
+
+            Patient patient = Hibernate.getInstance()
+                    .get(Patient.class, healthData.getPatientId());
+
+            dataSubject = patient;
+            resourceAttrs.put("id", String.valueOf(healthData.getPatientId()));
         } else if (resource instanceof ConsentRecord consent) {
             resourceAttrs.put("resource-type", "ConsentRecordData");
             dataSubject = consentSubject(consent.getPatientSubjectId(), consent.getEmployeeSubjectId());
@@ -172,8 +181,9 @@ public class XACMLPDP {
                         ? "missing"
                         : lawfulBasis.trim().toLowerCase(Locale.ROOT));
 
-        resourceAttrs.put("data-category", dataSubject instanceof Patient ? "health-data" : "employee-data");
-
+        resourceAttrs.put("data-category",
+                "HealthData".equals(resourceAttrs.get("resource-type"))
+                        ? "health-data" : "other-data");
         List<ConsentRecord> consentRecords = consentRecordsFor(dataSubject);
         ConsentRecord marketingConsent = latestConsent(consentRecords, "marketing");
         ConsentRecord researchConsent = latestConsent(consentRecords, "research");
