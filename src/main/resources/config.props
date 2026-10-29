@@ -1,4 +1,12 @@
 # Systems Privacy Labs and Projects - Configuration File
 
 # XACML (Lab 1)
-xacml.policy.file=ci_policies.xml
+xacml.policy.file=ci_policy.xml
+
+# Differential Privacy
+dp.privacy.budget=2.0
+dp.epsilon=0.5
+dp.glucose.lower=0
+dp.glucose.upper=500
+dp.age.lower=0
+dp.age.upper=120

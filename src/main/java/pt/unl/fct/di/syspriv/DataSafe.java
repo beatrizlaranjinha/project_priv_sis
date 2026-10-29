@@ -1,8 +1,10 @@
 package pt.unl.fct.di.syspriv;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import pt.unl.fct.di.syspriv.dp.DifferentialPrivacyTool;
 import pt.unl.fct.di.syspriv.entities.*;
 import pt.unl.fct.di.syspriv.storage.Hibernate;
+import pt.unl.fct.di.syspriv.util.RegressionUtilityExperiment;
 import pt.unl.fct.di.syspriv.xacml.XACMLPDP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ public class DataSafe {
     private final Hibernate hibernate = Hibernate.getInstance();
     private final XACMLPDP pdp;
     private Object loggedInPerson;
+    private DifferentialPrivacyTool differentialPrivacyTool;
 
     public DataSafe() throws Exception {
         this.pdp = new XACMLPDP();
@@ -58,7 +61,9 @@ public class DataSafe {
                 case 1 -> requestErasure();
                 case 2 -> exportMyData(scanner);
                 case 3 -> accessRecord(scanner);
-                case 5 -> {
+                case 4 -> runDifferentialPrivacyMenu(scanner);
+                case 5 -> runRegressionUtilityExperiment();
+                case 6 -> {
                     running = false;
                     System.out.println("Exiting...");
                 }
@@ -148,7 +153,9 @@ public class DataSafe {
         System.out.println("1. Request Erasure");
         System.out.println("2. Export my data");
         System.out.println("3. Access a record");
-        System.out.println("5. Exit");
+        System.out.println("4. Differential Privacy queries");
+        System.out.println("5. Age/glucose regression utility experiment");
+        System.out.println("6. Exit");
         System.out.print("Select an option: ");
 
         String input = scanner.nextLine();
@@ -157,6 +164,92 @@ public class DataSafe {
         } catch (NumberFormatException e) {
             return -1;
         }
+    }
+
+    private boolean isDpo() {
+        return loggedInPerson instanceof Employee employee
+                && employee.getRole() != null
+                && employee.getRole().equalsIgnoreCase("DPO");
+    }
+
+    private void runDifferentialPrivacyMenu(Scanner scanner) {
+        if (!isDpo()) {
+            System.out.println("Differential Privacy queries are available to DPO employees only.");
+            return;
+        }
+
+        if (differentialPrivacyTool == null) {
+            differentialPrivacyTool = new DifferentialPrivacyTool();
+        }
+
+        boolean inMenu = true;
+        while (inMenu) {
+            System.out.println("\n=== Differential Privacy queries ===");
+            System.out.println("Remaining privacy budget: " + differentialPrivacyTool.getPrivacyBudget());
+            System.out.println("1. Count records below a glucose threshold");
+            System.out.println("2. Sum glucose values");
+            System.out.println("3. Average glucose value");
+            System.out.println("4. Age and glucose histogram");
+            System.out.println("5. Back");
+            System.out.print("Select an option: ");
+
+            String input = scanner.nextLine();
+            DPResult result;
+            switch (input) {
+                case "1" -> {
+                    System.out.print("Enter the glucose threshold: ");
+                    try {
+                        int threshold = Integer.parseInt(scanner.nextLine().trim());
+                        result = differentialPrivacyTool.countBelowGlucose(threshold);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid threshold. Enter a whole number.");
+                        continue;
+                    }
+                    printDPResult(result);
+                }
+                case "2" -> printDPResult(differentialPrivacyTool.sumGlucoseValues());
+                case "3" -> printDPResult(differentialPrivacyTool.averageGlucoseValues());
+                case "4" -> printDPResult(differentialPrivacyTool.histogramAgeAndGlucose());
+                case "5" -> inMenu = false;
+                default -> System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    private void runRegressionUtilityExperiment() {
+        if (!isDpo()) {
+            System.out.println("Regression utility experiments are available to DPO employees only.");
+            return;
+        }
+        try {
+            new RegressionUtilityExperiment().runDefaultExperiment();
+        } catch (RuntimeException e) {
+            logger.error("Failed to run the regression utility experiment.", e);
+            System.out.println("Regression experiment failed: " + e.getMessage());
+        }
+    }
+
+    private void printDPResult(DPResult result) {
+        if (result.getResultCode() == DPResult.ResultCode.FAIL) {
+            System.out.println("DP query failed: insufficient privacy budget.");
+            System.out.println("Remaining privacy budget: " + result.getPrivacyBudget());
+            return;
+        }
+
+        if (result.getResultType() != DPResult.ResultType.HISTOGRAM) {
+            System.out.println(result);
+            return;
+        }
+
+        System.out.println("Type: " + result.getResultType().getCode());
+        System.out.println("Sensitivity: " + result.getQuerySensitivity());
+        System.out.println("Clipping bounds: [" + result.getClippingLower() + ", "
+                + result.getClippingUpper() + "]");
+        System.out.println("Remaining privacy budget: " + result.getPrivacyBudget());
+        Map<String, Float> bins = result.getHistogramResultValue();
+        System.out.println("Histogram bins: " + bins.size() + "; showing up to the first 20:");
+        bins.entrySet().stream().limit(20)
+                .forEach(entry -> System.out.println(entry.getKey() + ", Count: " + entry.getValue()));
     }
 
     private int promptTableSelection(Scanner scanner) {
@@ -520,4 +613,3 @@ public class DataSafe {
         }
     }
 }
-

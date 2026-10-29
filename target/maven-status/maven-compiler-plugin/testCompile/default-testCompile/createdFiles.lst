@@ -1,2 +1,3 @@
-pt/unl/fct/di/syspriv/AppTest.class
-pt/unl/fct/di/syspriv/KAnonymityToolTest.class
+pt\unl\fct\di\syspriv\KAnonymityToolTest.class
+pt\unl\fct\di\syspriv\AppTest.class
+pt\unl\fct\di\syspriv\dp\DifferentialPrivacyToolTest.class
