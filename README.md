@@ -12,10 +12,15 @@ requirements:
 - sqlite
 
 how to run:
+
 open a terminal in the project directory containing `pom.xml`.
+
 run all tests:
+
 `mvn clean test`
+
 compile and launch the application:
+
 `mvn clean compile exec:java`
 
 
